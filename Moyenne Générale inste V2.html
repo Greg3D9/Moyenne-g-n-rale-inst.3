@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calcul de moyenne générale</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: black;
+            font-family: Arial, sans-serif;
+            font-size: 20px;
+            text-shadow: 2px 2px 0px rgba(255, 0, 0, 0.2);
+            padding: 10px;
+            margin: 10px;
+            margin-bottom: 15px;
+            background-color: rgb(0, 0, 0);
+        }
+
+        h2 {
+            border: 6px double #187498;
+            background-color: #b1b4b8;
+            box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.2);
+            border-radius: 50px;
+            padding: 7px;
+            display: inline-block;
+            margin-bottom: -5px;
+            position: relative;
+            z-index: 2; /* Mettre le texte au premier plan */
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 18px;
+            border: 8px double #187498;
+            background-color: #b1b4b8;
+            box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.2);
+            border-radius: 50px;
+            padding: 3px;
+            display: inline-block;
+            margin-top: -2px;
+        }
+
+        input#nombreMatieres {
+            height: 30px;
+            width: 135px;
+            margin-top: 5px;
+            border-radius: 10px;
+            border: 6px #187498 double;
+            font-size: 18px;
+            background-color: #b1b4b8;
+            box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.2);
+            padding: 2px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+
+        th,
+        td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ff0404;
+        }
+
+        th {
+            background-color: #ffffff;
+        }
+
+        input {
+            width: 80px;
+        }
+
+        #result,
+        #error {
+            margin-top: 20px;
+            font-weight: bold;
+            padding: 10px;
+            border: 2px solid transparent;
+            background-clip: padding-box;
+            border-image-slice: 1;
+        }
+
+        #result {
+            border-image: linear-gradient(to right#00ff00);
+        }
+
+        #error {
+            border-image: linear-gradient(to right#ff0000);
+        }
+
+        /* Styles de couleur pour le tableau */
+        th,
+        td {
+            background-color: #e6f7ff;
+            height: 30px;
+            width: 555px;
+            border-radius: 10px;
+            border: 4px #187498 solid;
+        }
+
+        th:first-child,
+        td:first-child {
+            background-color: #00aeff;
+            height: 30px;
+            width: 555px;
+            border-radius: 10px;
+            border: 4px #187498 solid;
+            font-size: 18px;
+            background-color: skyblue;
+            padding: 2px;
+        }
+
+        th:nth-child(2),
+        td:nth-child(2) {
+            background-color: #e6f7ff;
+            height: 30px;
+            width: 555px;
+            border-radius: 10px;
+            border: 4px #187498 solid;
+        }
+
+        th:nth-child(3),
+        td:nth-child(3) {
+            background-color: #00aeff;
+            height: 30px;
+            width: 555px;
+            border-radius: 10px;
+            border: 4px #187498 solid;
+            font-size: 18px;
+            background-color: skyblue;
+            padding: 2px;
+        }
+
+        .matrix {
+            position: absolute;
+            font-family: 'Courier New', Courier, monospace;
+            color: #00FF00;
+            font-size: 20px;
+            pointer-events: none;
+            z-index: 1; /* Mettre la matrice en arrière-plan */
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        const columns = 50; // Number of columns
+        const speed = 20; // Speed of the animation
+        const characters = '01'; // Characters to display
+
+        // Generate a random character from the given set
+        function randomCharacter() {
+            return characters[Math.floor(Math.random() * characters.length)];
+        }
+
+        // Create a matrix column
+        function createMatrixColumn() {
+            const column = document.createElement('div');
+            column.className = 'matrix';
+            column.style.left = `${Math.floor(Math.random() * 100)}vw`;
+
+            // Generate a random starting position for the column
+            const startingPosition = Math.floor(Math.random() * 30);
+
+            for (let i = 0; i < 30; i++) {
+                const character = document.createElement('div');
+                character.textContent = randomCharacter();
+                character.style.animationDelay = `-${i - startingPosition}s`; // Apply animation delay
+                column.appendChild(character);
+            }
+
+            // Set the starting position for the column
+            column.style.top = `-${startingPosition * 20}px`;
+
+            document.body.appendChild(column);
+
+            return column;
+        }
+
+        // Update the matrix animation
+        function updateMatrix() {
+            const matrixElements = document.querySelectorAll('.matrix');
+
+            matrixElements.forEach((column) => {
+                const currentTop = parseFloat(column.style.top) || 0;
+                const newTop = currentTop + speed;
+
+                // Reset the column if it goes beyond the screen
+                if (newTop > window.innerHeight) {
+                    column.style.top = `${-30 * 20}px`;
+                } else {
+                    column.style.top = `${newTop}px`;
+                }
+            });
+
+            // Request the next animation frame
+            requestAnimationFrame(updateMatrix);
+        }
+
+        // Initialize the matrix
+        function initializeMatrix() {
+            for (let i = 0; i < columns; i++) {
+                const column = createMatrixColumn();
+                column.style.top = `${-i * 20}px`;
+            }
+
+            updateMatrix();
+        }
+
+        // Run the initialization
+        initializeMatrix();
+    </script>
+
+    <h2><u>Calcul de moyenne générale</u></h2>
+
+    <form id="moyenneForm">
+        <br><label for="nombreMatieres">Nombre de matières :</label></br>
+        <input type="number" id="nombreMatieres" min="0" max="9" required>
+
+        <div id="matieresContainer"></div>
+
+        <div id="result"></div>
+        <div id="error"></div>
+    </form>
+
+    <script>
+        function addMatiereInputs() {
+            const nombreMatieres = document.getElementById("nombreMatieres").value;
+            const matieresContainer = document.getElementById("matieresContainer");
+
+            // Créer une table si elle n'existe pas déjà
+            let table = matieresContainer.querySelector("table");
+            if (!table) {
+                table = document.createElement("table");
+                matieresContainer.appendChild(table);
+            }
+
+            // Créer ou mettre à jour le tbody
+            let tbody = table.querySelector("tbody");
+            if (!tbody) {
+                tbody = document.createElement("tbody");
+                table.appendChild(tbody);
+            }
+
+            // Limiter le nombre de matières affichées à 9
+            while (tbody.children.length > nombreMatieres) {
+                // Détacher les événements des anciens input avant de les supprimer
+                const inputsToRemove = tbody.lastChild.querySelectorAll("input[type='number']");
+                inputsToRemove.forEach(input => input.removeEventListener("input", calculerMoyenne));
+
+                tbody.lastChild.remove();
+            }
+
+            // Ajouter de nouveaux champs sans réinitialiser les champs existants
+            for (let i = tbody.children.length + 1; i <= nombreMatieres; i++) {
+                const tr = document.createElement("tr");
+
+                const thNote = document.createElement("th");
+                thNote.textContent = `Note matière ${i}`;
+                tr.appendChild(thNote);
+
+                const tdNote = document.createElement("td");
+                const inputNote = document.createElement("input");
+                inputNote.type = "number";
+                inputNote.min = "0";
+                inputNote.step = "0.01";
+                tdNote.appendChild(inputNote);
+                tr.appendChild(tdNote);
+
+                const thCoeff = document.createElement("th");
+                thCoeff.textContent = `Coefficient matière ${i}`;
+                tr.appendChild(thCoeff);
+
+                const tdCoeff = document.createElement("td");
+                const inputCoeff = document.createElement("input");
+                inputCoeff.type = "number";
+                inputCoeff.min = "0";
+                inputCoeff.step = "0.01";
+                tdCoeff.appendChild(inputCoeff);
+                tr.appendChild(tdCoeff);
+
+                tbody.appendChild(tr);
+
+                // Attacher l'événement input à chaque champ de note et coefficient
+                const inputsNote = document.querySelectorAll("#matieresContainer input[type='number']");
+                inputsNote.forEach(input => input.addEventListener("input", calculerMoyenne));
+            }
+        }
+
+        function calculerMoyenne() {
+            const inputsNote = document.querySelectorAll("#matieresContainer input[type='number']");
+            const nombreMatieres = inputsNote.length / 2;
+
+            let sommeNotesCoeff = 0;
+            let sommeCoeff = 0;
+
+            for (let i = 0; i < nombreMatieres; i++) {
+                const note = parseFloat(inputsNote[i * 2].value) || 0;
+                const coeff = parseFloat(inputsNote[i * 2 + 1].value) || 0;
+
+                sommeNotesCoeff += note * coeff;
+                sommeCoeff += coeff;
+            }
+
+            const moyenne = sommeNotesCoeff / sommeCoeff;
+
+            const resultContainer = document.getElementById("result");
+            const errorContainer = document.getElementById("error");
+
+            if (!isNaN(moyenne)) {
+
+                // Effacer le message d'erreur si présent
+                errorContainer.textContent = `Votre moyenne générale est : ${moyenne.toFixed(2)}`;
+                errorContainer.style.borderImage = "none";
+                errorContainer.style.backgroundColor = "rgba(0, 255, 0, 0.2)";
+            } else {
+                resultContainer.textContent = "";
+
+                // Afficher le message d'erreur
+                errorContainer.textContent = "Veuillez entrer des valeurs valides pour les notes et les coefficients.";
+                errorContainer.style.borderImage = "none";
+                errorContainer.style.backgroundColor = "rgba(255, 0, 0, 0.2)";
+            }
+        }
+
+        // Mettre à jour les champs lorsque le nombre de matières change
+        document.getElementById("nombreMatieres").addEventListener("input", addMatiereInputs);
+
+        // Appel initial pour générer les champs
+        addMatiereInputs();
+    </script>
+</body>
+
+</html>
